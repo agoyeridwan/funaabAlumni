@@ -1,5 +1,6 @@
 const sq = require("../util/init");
 const { DataTypes } = require("sequelize");
+const bcrypt = require("bcryptjs");
 const User = sq.define("user", {
   email: {
     type: DataTypes.STRING,
@@ -46,16 +47,31 @@ const User = sq.define("user", {
   },
   role: {
     type: DataTypes.STRING,
-    defaultValue: "student",
+    defaultValue: "Alumni",
     validate: {
       isIn: {
-        args: [["student", "admin", "lecturer"]],
+        args: [["Alumni", "student", "admin", "lecturer"]],
         msg: "The valus should either be Student, admin or lecturer",
       },
     },
   },
+  entryYear: {
+    type: DataTypes.STRING,
+  },
 });
+User.beforeCreate(async (user, options) => {
+  console.log("I am saving this hook");
+  console.log(user.password);
+  user.password = await bcrypt.hash(user.password, 13);
+  console.log("Thse user hashed password is", user.password);
+
+  // user.passwordConfirm = undefined;
+});
+// User.afterValidate((user, options) => {
+//   user.passwordConfirm = undefined;
+// });
 User.sync().then(() => {
   console.log("User model created");
 });
+
 module.exports = User;

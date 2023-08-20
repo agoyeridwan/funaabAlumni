@@ -5,7 +5,12 @@ class factoryFunction {
     return catchAsync(async (req, res, next) => {
       // return async (req, res, next) => {
       // try {
-      const doc = await model.create(req.body);
+      let doc = await model.create(req.body);
+      doc = await doc.update({
+        passwordConfirm: "",
+        entryYear: doc.matricNumber.slice(0, 4),
+      });
+      // doc = await doc.update({ passwordConfirm: undefined });
       res.status(200).json({
         status: "success",
 
