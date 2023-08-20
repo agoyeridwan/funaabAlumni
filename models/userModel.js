@@ -1,12 +1,12 @@
 const sq = require("../util/init");
 const { DataTypes } = require("sequelize");
-const User = sq.define("User", {
+const User = sq.define("user", {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
       isEmail: {
-        msg: "This field must be an email",
+        msg: "Please enter a valid email address",
       },
     },
     unique: true,
@@ -17,9 +17,7 @@ const User = sq.define("User", {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: {
-      msg: "Please provide a password",
-    },
+    allowNull: false,
   },
   passwordConfirm: {
     type: DataTypes.STRING,
@@ -35,8 +33,12 @@ const User = sq.define("User", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
-  workPlace: {
+  workplace: {
     type: DataTypes.STRING,
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   photo: {
     type: DataTypes.STRING,
@@ -46,8 +48,10 @@ const User = sq.define("User", {
     type: DataTypes.STRING,
     defaultValue: "student",
     validate: {
-      isIn: [["student", "admin", "lecturer"]],
-      msg: "The valus should either be Student, admin or lecturer",
+      isIn: {
+        args: [["student", "admin", "lecturer"]],
+        msg: "The valus should either be Student, admin or lecturer",
+      },
     },
   },
 });

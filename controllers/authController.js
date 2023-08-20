@@ -1,0 +1,3 @@
+class authController {
+  restrictTo() {}
+}
