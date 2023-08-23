@@ -7,7 +7,7 @@ router.route("/signup").post(authController.signup(userModel));
 router.route("/login").post(authController.login(userModel));
 router
   .route("/")
-  .post(userController.createOne(userModel))
+  .post(authController.protect(userModel), userController.createOne(userModel))
   .get(userController.findAll(userModel));
 
 router
