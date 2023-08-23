@@ -21,8 +21,8 @@ class authController {
         status: "success",
         data: {
           doc,
-          token,
         },
+        token,
       });
     });
   }
@@ -53,8 +53,28 @@ class authController {
       });
     });
   }
-  protect(req, res, nest) {
-    console.log(req.headers);
+  protect(model) {
+    return catchAsync(async (req, res, next) => {
+      const token = req.headers.authorization.split(" ")[1];
+      if (!token)
+        return next(
+          new AppError(
+            "You are not logged in please log in to have access",
+            401
+          )
+        );
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded);
+        const currentUser = await model.findOne({
+          where: { matricNumber: decoded.id },
+        });
+        if (!currentUser) return new AppError("This user no longer exist", 401);
+        console.log(currentUser.dataValues);
+        req.user = currentUser.dataValues;
+        next();
+      }
+    });
   }
   _signAPIToken(id) {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
